@@ -6,10 +6,10 @@ spec:
   environments:
     default:
       defaultNamespace: default
-      server: https://kubernetes.default
+      server: https://158.160.64.93:6443
     app:
       defaultNamespace: app
-      server: https://kubernetes.default
+      server: https://158.160.64.93:6443
   vars:
     external:
       - name: LAST_TAG

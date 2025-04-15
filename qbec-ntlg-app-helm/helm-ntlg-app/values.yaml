@@ -12,7 +12,7 @@ image:
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "app-ntlg"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -57,10 +57,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls:
+   - secretName: app-secret-tls
+     hosts:
+       - app-ntlg.gfg24.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
