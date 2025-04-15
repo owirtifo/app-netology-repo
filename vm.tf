@@ -79,7 +79,7 @@ resource "yandex_compute_instance_group" "k8s-masters" {
     }
 
     metadata = {
-      ssh-keys = "ubuntu:${file("/root/.ssh/id_rsa.pub")}"
+      ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
     }
   }
 
@@ -149,7 +149,7 @@ resource "yandex_compute_instance_group" "k8s-workers" {
     }
 
     metadata = {
-      ssh-keys = "ubuntu:${file("/root/.ssh/id_rsa.pub")}"
+      ssh-keys = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
     }
   }
 
