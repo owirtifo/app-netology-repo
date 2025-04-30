@@ -24,6 +24,7 @@ controller:
                   printContributedVariables(false)
                   printPostContent(false)
                   silentResponse(false)
+                  allowSeveralTriggersPerBuild(true)
                 }
               }
               definition {
@@ -98,6 +99,12 @@ controller:
                                 }
                             }
                             stage('Install App with Qbec') {
+                                when {
+                                    beforeAgent true
+                                    not {
+                                        environment name: 'GIT_GET_TAG', value: ''
+                                    }
+                                }
                                 agent {
                                     kubernetes {
                                     yaml \'''
@@ -119,35 +126,29 @@ controller:
                                       requests:
                                         memory: "512Mi"
                                         cpu: "512m"
-                                  serviceAccountName: jenkins
+                                  serviceAccountName: qbec
                                     \'''
                                     }
                                 }
                                 steps {
                                     container('qbec') {
-                                        script {
-                                            if (env.GIT_GET_TAG != '') {
-                                                sh \'''
-                                                # Install qbec
-                                                wget -q https://github.com/splunk/qbec/releases/download/v0.16.3/qbec-linux-amd64.tar.gz
-                                                tar zxf qbec-linux-amd64.tar.gz
-                                                cp qbec /usr/bin/
+                                        sh \'''
+                                        # Install qbec
+                                        wget -q https://github.com/splunk/qbec/releases/download/v0.16.3/qbec-linux-amd64.tar.gz
+                                        tar zxf qbec-linux-amd64.tar.gz
+                                        cp qbec /usr/bin/
 
-                                                # Create kubeconfig
+                                        # Create kubeconfig
 
-                                                kubectl config set-cluster k8s-cluster --server=\$CLUSTER_URL --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --embed-certs=true
-                                                kubectl config set-credentials jenkins --token=`cat /var/run/secrets/kubernetes.io/serviceaccount/token`
-                                                kubectl config set-context k8s --cluster=k8s-cluster --user=jenkins --namespace `cat /var/run/secrets/kubernetes.io/serviceaccount/namespace`
-                                                \'''
+                                        kubectl config set-cluster k8s-cluster --server=$CLUSTER_URL --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt --embed-certs=true
+                                        kubectl config set-credentials qbec --token=`cat /var/run/secrets/kubernetes.io/serviceaccount/token`
+                                        kubectl config set-context k8s --cluster=k8s-cluster --user=qbec --namespace `cat /var/run/secrets/kubernetes.io/serviceaccount/namespace`
+                                        \'''
 
-                                                git branch: 'main', url: 'https://github.com/owirtifo/app-qbec.git'
+                                        git branch: 'main', url: 'https://github.com/owirtifo/app-qbec.git'
 
-                                                // Install App
-                                                sh "qbec apply app --vm:ext-str LAST_TAG --yes"
-                                            } else {
-                                               echo "No Tag"
-                                            }
-                                        }
+                                        // Install App
+                                        sh "qbec apply app --vm:ext-str LAST_TAG --yes"
                                     }
                                 }
                             }
@@ -220,6 +221,10 @@ controller:
     securityContext:
       runAsUser: 0
       runAsNonRoot: false
+      capabilities:
+        drop:
+          - all
+        add: ["CHOWN"]
     volumeMounts:
     - name: jenkins-home
       mountPath: /var/jenkins_home

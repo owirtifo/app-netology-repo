@@ -21,7 +21,7 @@ locals {
 
 locals {
   resources_core_fraction = {
-    stage = 20
+    stage = 100
     prod = 100
   }
 }
@@ -51,8 +51,8 @@ resource "yandex_compute_instance_group" "k8s-masters" {
     name = "master-{instance.index}-${terraform.workspace}"
     platform_id = local.netology_instance_type[terraform.workspace]
     resources {
-      memory = 2
-      cores  = 2
+      memory = 4
+      cores  = 4
       core_fraction = local.resources_core_fraction[terraform.workspace]
     }
 
@@ -121,8 +121,8 @@ resource "yandex_compute_instance_group" "k8s-workers" {
     name = "worker-{instance.index}-${terraform.workspace}"
     platform_id = local.netology_instance_type[terraform.workspace]
     resources {
-      memory = 2
-      cores  = 2
+      memory = 4
+      cores  = 4
       core_fraction = local.resources_core_fraction[terraform.workspace]
     }
 

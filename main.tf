@@ -9,11 +9,11 @@ terraform {
   backend "s3" {
     endpoints = {
       s3 = "https://storage.yandexcloud.net"
-      dynamodb = "https://docapi.serverless.yandexcloud.net/ru-central1/b1g3q01qijnmfda3qlag/etnsg0qggnj71e9g5om0"
+      dynamodb = "https://docapi.serverless.yandexcloud.net/ru-central1/b1g3q01qijnmfda3qlag/etn0dmqmism9n4mlvbt0"
     }
     bucket     = "netology-bucket"
     region     = "ru-central1"
-    key        = "default/terraform.tfstate"
+    key        = "terraform.tfstate"
     dynamodb_table = "terraform-lock-table"
 
     skip_region_validation      = true

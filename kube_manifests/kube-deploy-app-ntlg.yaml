@@ -18,6 +18,7 @@ spec:
       containers:
         - name: app-netology
           image: "owirtifo/ntlg-app:v1.0.0"
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               protocol: TCP
